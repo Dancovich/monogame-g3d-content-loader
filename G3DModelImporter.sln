@@ -14,4 +14,9 @@ Global
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.VersionControlPolicy = $1
+		$1.inheritsSet = Mono
+	EndGlobalSection
 EndGlobal
