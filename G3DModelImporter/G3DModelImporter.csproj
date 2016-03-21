@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -28,8 +28,8 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="G3DImporter\G3DAttributeConverter.cs" />
     <Compile Include="G3DImporter\G3DImporter.cs" />
-    <Compile Include="G3DImporter\G3DProcessor.cs" />
     <Compile Include="JsonModelData\MaterialData.cs" />
     <Compile Include="JsonModelData\MeshData.cs" />
     <Compile Include="JsonModelData\MeshPartData.cs" />
@@ -48,12 +48,10 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="G3DImporter\" />
-    <Folder Include="JsonModelData\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
