@@ -3,18 +3,14 @@ using System.Collections.Generic;
 
 namespace G3DModelImporter.JsonModelData
 {
-	public class ModelData
+    internal class ModelData
 	{
-        private readonly List<MeshData> meshes = new List<MeshData>();
+        public readonly List<MeshData> meshes = new List<MeshData>();
 
-        private readonly List<MaterialData> materials = new List<MaterialData>();
+        public readonly List<MaterialData> materials = new List<MaterialData>();
 
-        public List<MeshData> Meshes
-        {
-            get
-            {
-                return this.meshes;
-            }
-        }
+        public readonly List<NodeData> nodes = new List<NodeData>();
+
+        public readonly List<AnimationData> animations = new List<AnimationData>();
 	}
 }

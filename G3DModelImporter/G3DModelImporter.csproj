@@ -30,10 +30,15 @@
   <ItemGroup>
     <Compile Include="G3DImporter\G3DAttributeConverter.cs" />
     <Compile Include="G3DImporter\G3DImporter.cs" />
+    <Compile Include="JsonModelData\AnimationData.cs" />
+    <Compile Include="JsonModelData\BoneData.cs" />
+    <Compile Include="JsonModelData\KeyframeData.cs" />
     <Compile Include="JsonModelData\MaterialData.cs" />
     <Compile Include="JsonModelData\MeshData.cs" />
     <Compile Include="JsonModelData\MeshPartData.cs" />
     <Compile Include="JsonModelData\ModelData.cs" />
+    <Compile Include="JsonModelData\NodeAnimationData.cs" />
+    <Compile Include="JsonModelData\NodePartData.cs" />
     <Compile Include="JsonModelData\VertexAttribute.cs" />
     <Compile Include="JsonModelData\NodeData.cs" />
   </ItemGroup>

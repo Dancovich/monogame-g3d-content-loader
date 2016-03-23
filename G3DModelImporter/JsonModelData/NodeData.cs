@@ -3,25 +3,19 @@ using Microsoft.Xna.Framework;
 
 namespace G3DModelImporter.JsonModelData
 {
-    public class NodeData
+    internal class NodeData
     {
-        private string id;
+        public string id;
 
-        private int boneId = -1;
+        public Vector3 translation;
 
-        private Vector3 translation;
+        public Vector3 rotation;
 
-        private Vector3 rotation;
+        public Vector3 scale;
 
-        private Vector3 scale;
+        public NodePartData[] parts;
 
-        private string meshId;
-
-        private NodeData[] children;
-
-        public NodeData()
-        {
-        }
+        public NodeData[] children;
     }
 }
 

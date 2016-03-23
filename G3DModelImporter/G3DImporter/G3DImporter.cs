@@ -4,9 +4,30 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Newtonsoft.Json;
 using System.IO;
+using System;
+using System.Collections.Generic;
 
 namespace G3DModelImporter.G3DImporter
 {
+    /// <summary>
+    /// Reads LibGDX G3D model files to use with MonoGame. G3D files use JSON to describe
+    /// a model as an hierarchy of nodes, where each node has a material and a mesh part.
+    /// A mesh part is a collection of indices referencing a mesh (which is simply a collection of
+    /// vertices), using a basic primitive - for example a mesh part made of triangles simply have collections
+    /// of three indices referencing vertices from the mesh and each three indices form a triangle.
+    /// 
+    /// The G3D format also support skinning by having "invisible" nodes. An invisible node has no mesh part or material
+    /// but do have a transform matrix (split into translate, rotate and scale vectors). Visible nodes
+    /// reference these invisible nodes as bones of an armature.
+    /// 
+    /// Finally the G3D format support animation by referencing these bones in keyframes, which each keyframe
+    /// having the transform of the bone on that key time.
+    /// </summary>
+    /// <remarks>
+    /// LibGDX is a Java based framework for games that's very similar in design to XNA/MonoGame. The framework can
+    /// be found here: http://libgdx.badlogicgames.com and the specification for the G3D format can be found
+    /// here: https://github.com/libgdx/fbx-conv/wiki
+    /// </remarks>
     [ContentImporter(".g3dj", DisplayName = "G3D Importer", DefaultProcessor = "ModelProcessor")]
     public class G3DImporter : ContentImporter<NodeContent>
     {
@@ -25,6 +46,10 @@ namespace G3DModelImporter.G3DImporter
             jsonSerializer = null;
             jsonReader = null;
 
+            // We'll keep references to generated geometry to reference them later when
+            // reading nodes and bones.
+            Dictionary<string, GeometryContent> meshPartContentCollection = new Dictionary<string, GeometryContent>();
+
             // Root of the model
             string rootContentName = FilenameToName(filename);
             NodeContent rootContent = new NodeContent
@@ -35,40 +60,44 @@ namespace G3DModelImporter.G3DImporter
             };
 
             // Read mesh data
-            foreach (MeshData meshData in jsonModelData.Meshes)
+            foreach (MeshData meshData in jsonModelData.meshes)
             {
-                MeshContent meshContent = new MeshContent();
-
-                // Calculate offset for vertex position in vertex buffer
-                int vertexOffset = 0;
-                int positionOffset = 0;
-                bool foundPosition = false;
-                foreach (VertexAttribute attr in meshData.Attributes)
+                MeshContent meshContent = new MeshContent()
                 {
-                    vertexOffset += attr.NumComponents;
-                    if (!foundPosition && attr.Usage != VertexAttribute.POSITION)
-                    {
-                        positionOffset += attr.NumComponents;
-                    }
-                    else
-                    {
-                        foundPosition = true;
-                    }
+                    Name = string.Empty
+                };
+
+                // Store the offset for every vertex channel contained in the mesh
+                int vertexOffset = 0;
+                Dictionary<int, int> vertexChannels = new Dictionary<int, int>();
+                foreach (VertexAttribute attr in meshData.attributes)
+                {
+                    vertexChannels[attr.usage] = vertexOffset;
+                    vertexOffset += attr.numComponents;
                 }
 
                 // Adds vertex positions to mesh
-                for (int i=0; i<meshData.Vertices.Length; i+= vertexOffset)
+                for (int i = 0; i < meshData.vertices.Length; i += vertexOffset)
                 {
-                    meshContent.Positions.Add(new Vector3(meshData.Vertices[i + positionOffset]
-                        , meshData.Vertices[i + positionOffset + 1]
-                        , meshData.Vertices[i + positionOffset + 2]));
+                    int positionOffset = vertexChannels[VertexAttribute.POSITION];
+                    meshContent.Positions.Add(new Vector3(meshData.vertices[i + positionOffset]
+                        , meshData.vertices[i + positionOffset + 1]
+                        , meshData.vertices[i + positionOffset + 2]));
                 }
 
-                // Sets triangle indexes
-                for 
-                meshContent.Geometry.
+                // Build geometry data (collection of primitives) for that mesh
+                foreach (MeshPartData meshPart in meshData.meshParts)
+                {
+                    GeometryContent geometryContent = new GeometryContent
+                    {
+                        Name = meshPart.id,
+                        Parent = meshContent
+                    };
 
-                rootContent.Children.Add(meshContent);
+                    meshPartContentCollection[meshPart.id] = 
+                    meshContent.Geometry.Add(geometryContent);
+                }
+
             }
 
             return rootContent;

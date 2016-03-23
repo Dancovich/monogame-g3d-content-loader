@@ -2,10 +2,10 @@
 
 namespace G3DModelImporter.JsonModelData
 {
-    public class VertexAttribute
+    internal class VertexAttribute
     {
-        private int usage;
-        private int numComponents;
+        public int usage;
+        public int numComponents;
 
         public const int POSITION = 1;
         public const int COLOR = 2;
@@ -17,38 +17,10 @@ namespace G3DModelImporter.JsonModelData
         public const int TANGENT = 128;
         public const int BINORMAL = 256;
 
-        public int Usage
-        {
-            get
-            {
-                return this.usage;
-            }
-            set
-            {
-                usage = value;
-            }
-        }
-
-        public int NumComponents
-        {
-            get
-            {
-                return this.numComponents;
-            }
-            set
-            {
-                numComponents = value;
-            }
-        }
-
-        public VertexAttribute()
-        {
-        }
-
         public VertexAttribute(int usage, int numComponents)
         {
-            this.Usage = usage;
-            this.NumComponents = numComponents;
+            this.usage = usage;
+            this.numComponents = numComponents;
         }
     }
 }
