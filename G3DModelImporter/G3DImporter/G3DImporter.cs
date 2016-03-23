@@ -4,29 +4,44 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Newtonsoft.Json;
 using System.IO;
-using System;
 using System.Collections.Generic;
 
 namespace G3DModelImporter.G3DImporter
 {
     /// <summary>
-    /// Reads LibGDX G3D model files to use with MonoGame. G3D files use JSON to describe
+    /// Reads text LibGDX G3D model files to use with MonoGame. 
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// G3D files use JSON to describe
     /// a model as an hierarchy of nodes, where each node has a material and a mesh part.
     /// A mesh part is a collection of indices referencing a mesh (which is simply a collection of
     /// vertices), using a basic primitive - for example a mesh part made of triangles simply have collections
     /// of three indices referencing vertices from the mesh and each three indices form a triangle.
+    /// </para>
     /// 
+    /// <para>
     /// The G3D format also support skinning by having "invisible" nodes. An invisible node has no mesh part or material
     /// but do have a transform matrix (split into translate, rotate and scale vectors). Visible nodes
-    /// reference these invisible nodes as bones of an armature.
+    /// reference these invisible nodes as bones of an armature and they are weighted to individual vertices
+    /// through use of the BLENDWEIGHT vertex attribute.
+    /// </para>
     /// 
+    /// <para>
+    /// Other vertex attributes are also supported like NORMAL, TEXCOORD, TANGENT, COLOR and COLORPACKED. These
+    /// are read into XNA as vertex channels.
+    /// </para>
+    /// 
+    /// <para>
     /// Finally the G3D format support animation by referencing these bones in keyframes, which each keyframe
     /// having the transform of the bone on that key time.
-    /// </summary>
-    /// <remarks>
+    /// </para>
+    /// 
+    /// <para>
     /// LibGDX is a Java based framework for games that's very similar in design to XNA/MonoGame. The framework can
     /// be found here: http://libgdx.badlogicgames.com and the specification for the G3D format can be found
     /// here: https://github.com/libgdx/fbx-conv/wiki
+    /// </para>
     /// </remarks>
     [ContentImporter(".g3dj", DisplayName = "G3D Importer", DefaultProcessor = "ModelProcessor")]
     public class G3DImporter : ContentImporter<NodeContent>
@@ -49,6 +64,7 @@ namespace G3DModelImporter.G3DImporter
             // We'll keep references to generated geometry to reference them later when
             // reading nodes and bones.
             Dictionary<string, GeometryContent> meshPartContentCollection = new Dictionary<string, GeometryContent>();
+            Dictionary<string, MaterialContent> materialContentCollection = new Dictionary<string, MaterialContent>();
 
             // Root of the model
             string rootContentName = FilenameToName(filename);
@@ -66,6 +82,7 @@ namespace G3DModelImporter.G3DImporter
                 {
                     Name = string.Empty
                 };
+                rootContent.Children.Add(meshContent);
 
                 // Store the offset for every vertex channel contained in the mesh
                 int vertexOffset = 0;
@@ -88,16 +105,28 @@ namespace G3DModelImporter.G3DImporter
                 // Build geometry data (collection of primitives) for that mesh
                 foreach (MeshPartData meshPart in meshData.meshParts)
                 {
+                    // We only support triangle
+
                     GeometryContent geometryContent = new GeometryContent
                     {
                         Name = meshPart.id,
                         Parent = meshContent
                     };
 
-                    meshPartContentCollection[meshPart.id] = 
+                    meshPartContentCollection[meshPart.id] = geometryContent;
                     meshContent.Geometry.Add(geometryContent);
-                }
 
+                    geometryContent.Indices.AddRange(meshPart.indices);
+                    //TODO:  Verificar como funciona GeometryContent.Vertices e se preciso preenche-lo.
+                }
+            }
+
+            // Loop through materials to import them
+            foreach (MaterialData materialData in jsonModelData.materials)
+            {
+                MaterialContent materialContent = new MaterialContent();
+                //TODO: importar materiais
+                materialContentCollection.[materialData.id] = materialContent;
             }
 
             return rootContent;
