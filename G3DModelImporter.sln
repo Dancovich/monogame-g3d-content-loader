@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "G3DModelImporter", "G3DModelImporter\G3DModelImporter.csproj", "{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGame", "TestGame\TestGame.csproj", "{78BE7864-2596-46D7-852B-7D740F909D25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,12 @@ Global
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|x86.ActiveCfg = Release|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|x86.Build.0 = Release|Any CPU
+		{78BE7864-2596-46D7-852B-7D740F909D25}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{78BE7864-2596-46D7-852B-7D740F909D25}.Debug|x86.ActiveCfg = Debug|x86
+		{78BE7864-2596-46D7-852B-7D740F909D25}.Debug|x86.Build.0 = Debug|x86
+		{78BE7864-2596-46D7-852B-7D740F909D25}.Release|Any CPU.ActiveCfg = Release|x86
+		{78BE7864-2596-46D7-852B-7D740F909D25}.Release|x86.ActiveCfg = Release|x86
+		{78BE7864-2596-46D7-852B-7D740F909D25}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,7 @@
-﻿namespace G3DModelImporter.JsonModelData
+﻿using System;
+using Newtonsoft.Json.Converters;
+
+namespace G3DModelImporter.JsonModelData
 {
     internal class MeshPartData
     {

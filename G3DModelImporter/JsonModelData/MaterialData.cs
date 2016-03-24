@@ -19,5 +19,7 @@ namespace G3DModelImporter.JsonModelData
         public float shininess;
 
         public float opacity = 1f;
+
+        public TextureData[] textures;
     }
 }

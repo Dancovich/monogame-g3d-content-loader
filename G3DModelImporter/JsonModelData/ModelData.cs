@@ -1,8 +1,11 @@
-﻿using System;
+﻿using G3DModelImporter.G3DImporter;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace G3DModelImporter.JsonModelData
 {
+    [TypeConverter(typeof(G3DTypeConverter))]
     internal class ModelData
 	{
         public readonly List<MeshData> meshes = new List<MeshData>();

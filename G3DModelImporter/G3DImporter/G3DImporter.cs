@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 using Newtonsoft.Json;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 
 namespace G3DModelImporter.G3DImporter
 {
@@ -53,7 +53,8 @@ namespace G3DModelImporter.G3DImporter
 
             jsonSerializer.MissingMemberHandling = MissingMemberHandling.Ignore;
             jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
-            jsonSerializer.Converters.Add(new G3DAttributeConverter());
+
+            jsonSerializer.Converters.Add(new G3DTypeConverter());
 
             // Deserialize the G3D file into our own data model
             ModelData jsonModelData = jsonSerializer.Deserialize<ModelData>(jsonReader);
@@ -68,9 +69,10 @@ namespace G3DModelImporter.G3DImporter
 
             // Root of the model
             string rootContentName = FilenameToName(filename);
+            ContentIdentity rootContentIdentity = new ContentIdentity(filename, GetType().Name);
             NodeContent rootContent = new NodeContent
             {
-                Identity = new ContentIdentity(filename, GetType().Name),
+                Identity = rootContentIdentity,
                 Name = rootContentName,
                 Transform = Matrix.Identity
             };
@@ -103,14 +105,13 @@ namespace G3DModelImporter.G3DImporter
                 }
 
                 // Build geometry data (collection of primitives) for that mesh
-                foreach (MeshPartData meshPart in meshData.meshParts)
+                foreach (MeshPartData meshPart in meshData.parts)
                 {
                     // We only support triangle
 
                     GeometryContent geometryContent = new GeometryContent
                     {
-                        Name = meshPart.id,
-                        Parent = meshContent
+                        Name = meshPart.id
                     };
 
                     meshPartContentCollection[meshPart.id] = geometryContent;
@@ -124,9 +125,27 @@ namespace G3DModelImporter.G3DImporter
             // Loop through materials to import them
             foreach (MaterialData materialData in jsonModelData.materials)
             {
-                MaterialContent materialContent = new MaterialContent();
-                //TODO: importar materiais
-                materialContentCollection.[materialData.id] = materialContent;
+                SkinnedMaterialContent materialContent = new SkinnedMaterialContent();
+
+                materialContent.Alpha = materialData.opacity;
+                materialContent.SpecularPower = materialData.shininess;
+                if (materialData.diffuse != null)
+                    materialContent.DiffuseColor = materialData.diffuse.ToVector3();
+                if (materialData.emissive != null)
+                    materialContent.EmissiveColor = materialData.emissive.ToVector3();
+                if (materialData.specular != null)
+                    materialContent.SpecularColor = materialData.specular.ToVector3();
+
+                if (materialData.textures != null)
+                {
+                    foreach (TextureData textureData in materialData.textures)
+                    {
+                        ExternalReference<TextureContent> textureExternalReference = new ExternalReference<TextureContent>(textureData.fileName, rootContentIdentity);
+                        materialContent.Textures.Add(textureData.id, textureExternalReference);
+                    }
+                }
+
+                materialContentCollection[materialData.id] = materialContent;
             }
 
             return rootContent;
