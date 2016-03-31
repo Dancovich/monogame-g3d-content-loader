@@ -6,19 +6,19 @@ namespace G3DModelImporter.JsonModelData
     {
         public string id;
 
-        public Color ambient;
+        public Vector3? ambient;
 
-        public Color diffuse;
+        public Vector3? diffuse;
 
-        public Color specular;
+        public Vector3? specular;
 
-        public Color emissive;
+        public Vector3? emissive;
 
-        public Color reflection;
+        public Vector3? reflection;
 
-        public float shininess;
+        public float? shininess;
 
-        public float opacity = 1f;
+        public float? opacity = 1f;
 
         public TextureData[] textures;
     }

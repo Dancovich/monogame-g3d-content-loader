@@ -7,11 +7,11 @@ namespace G3DModelImporter.JsonModelData
     {
         public string id;
 
-        public Vector3 translation;
+        public Vector3? translation;
 
-        public Vector3 rotation;
+        public Vector3? rotation;
 
-        public Vector3 scale;
+        public Vector3? scale;
 
         public NodePartData[] parts;
 

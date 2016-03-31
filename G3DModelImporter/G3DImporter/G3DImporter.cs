@@ -53,12 +53,12 @@ namespace G3DModelImporter.G3DImporter
 
             jsonSerializer.MissingMemberHandling = MissingMemberHandling.Ignore;
             jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
-
             jsonSerializer.Converters.Add(new G3DTypeConverter());
 
             // Deserialize the G3D file into our own data model
             ModelData jsonModelData = jsonSerializer.Deserialize<ModelData>(jsonReader);
 
+            // Clear references
             jsonSerializer = null;
             jsonReader = null;
 
@@ -107,18 +107,45 @@ namespace G3DModelImporter.G3DImporter
                 // Build geometry data (collection of primitives) for that mesh
                 foreach (MeshPartData meshPart in meshData.parts)
                 {
-                    // We only support triangle
+                    // We only support triangles. 4 is the value for GL_TRIANGLES in OpenGL.
+                    if (meshPart.primitiveType != 4)
+                    {
+                        continue;
+                    }
 
+                    // Here we create our mesh part (called GeometryContent in XNA)
+                    // and save it for later in a named dictionary, since attatching
+                    // this mesh part's material comes at a later stage
                     GeometryContent geometryContent = new GeometryContent
                     {
                         Name = meshPart.id
                     };
-
                     meshPartContentCollection[meshPart.id] = geometryContent;
                     meshContent.Geometry.Add(geometryContent);
 
-                    geometryContent.Indices.AddRange(meshPart.indices);
-                    //TODO:  Verificar como funciona GeometryContent.Vertices e se preciso preenche-lo.
+                    // Adds position indices to this geometry and form our triangles
+                    foreach (int vertexIndex in meshPart.indices)
+                    {
+                        // If it's the first time we're adding this index, add it
+                        // to the Vertices list.
+                        if (!geometryContent.Indices.Contains(vertexIndex))
+                        {
+                            geometryContent.Vertices.Add(vertexIndex);
+                        }
+
+                        // Here we are composing triangles, each three indicies form a triangle.
+                        geometryContent.Indices.Add(vertexIndex);
+                    }
+
+                    // Adds vertex channels to this geometry content
+                    foreach (KeyValuePair<int, int> vertexEntry in vertexChannels)
+                    {
+                        switch (vertexEntry.Key)
+                        {
+                            case VertexAttribute.NORMAL:
+                                
+                        }
+                    }
                 }
             }
 
@@ -129,12 +156,9 @@ namespace G3DModelImporter.G3DImporter
 
                 materialContent.Alpha = materialData.opacity;
                 materialContent.SpecularPower = materialData.shininess;
-                if (materialData.diffuse != null)
-                    materialContent.DiffuseColor = materialData.diffuse.ToVector3();
-                if (materialData.emissive != null)
-                    materialContent.EmissiveColor = materialData.emissive.ToVector3();
-                if (materialData.specular != null)
-                    materialContent.SpecularColor = materialData.specular.ToVector3();
+                materialContent.DiffuseColor = materialData.diffuse;
+                materialContent.EmissiveColor = materialData.emissive;
+                materialContent.SpecularColor = materialData.specular;
 
                 if (materialData.textures != null)
                 {
@@ -148,7 +172,33 @@ namespace G3DModelImporter.G3DImporter
                 materialContentCollection[materialData.id] = materialContent;
             }
 
+            // Loop through nodes to associate geometry with material
+            foreach (NodeData nodeData in jsonModelData.nodes)
+            {
+                if (nodeData.parts != null && nodeData.parts.Length > 0)
+                {
+                    foreach (NodePartData nodePartData in nodeData.parts)
+                    {
+                        GeometryContent equivalentGeometry = meshPartContentCollection[nodePartData.meshPartId];
+                        SkinnedMaterialContent equivalentMaterial = materialContentCollection[nodePartData.materialId];
+
+                        equivalentGeometry.Material = equivalentMaterial;
+                    }
+                }
+            }
+
             return rootContent;
+        }
+
+        private Vector2[] AsVector2 (float[] vertices, int vertexSize, int index, int offset, int[] indices)
+        {
+            int offsetPosition = (index * vertexSize) + offset;
+            Vector2[] data = new Vector2[indices.Length];
+
+            for (int i=0; i<indices.Length; i++)
+            {
+                
+            }
         }
 
         private string FilenameToName(string filename)

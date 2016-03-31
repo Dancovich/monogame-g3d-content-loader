@@ -11,11 +11,11 @@ namespace G3DModelImporter.JsonModelData
     {
         public string node;
 
-        public Vector3 translation;
+        public Vector3? translation;
 
-        public Quaternion rotation;
+        public Quaternion? rotation;
 
-        public Vector3 scale;
+        public Vector3? scale;
 
         public int[][] uvmapping;
     }
