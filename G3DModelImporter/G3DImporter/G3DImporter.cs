@@ -46,6 +46,9 @@ namespace G3DModelImporter.G3DImporter
     [ContentImporter(".g3dj", DisplayName = "G3D Importer", DefaultProcessor = "ModelProcessor")]
     public class G3DImporter : ContentImporter<NodeContent>
     {
+
+        private List<int> vertexIndices = new List<int>();
+
         public override NodeContent Import(string filename, ContentImporterContext context)
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
@@ -57,10 +60,6 @@ namespace G3DModelImporter.G3DImporter
 
             // Deserialize the G3D file into our own data model
             ModelData jsonModelData = jsonSerializer.Deserialize<ModelData>(jsonReader);
-
-            // Clear references
-            jsonSerializer = null;
-            jsonReader = null;
 
             // We'll keep references to generated geometry to reference them later when
             // reading nodes and bones.
@@ -94,9 +93,10 @@ namespace G3DModelImporter.G3DImporter
                     vertexChannels[attr.usage] = vertexOffset;
                     vertexOffset += attr.numComponents;
                 }
+                int vertexSize = vertexOffset;
 
                 // Adds vertex positions to mesh
-                for (int i = 0; i < meshData.vertices.Length; i += vertexOffset)
+                for (int i = 0; i < meshData.vertices.Length; i += vertexSize)
                 {
                     int positionOffset = vertexChannels[VertexAttribute.POSITION];
                     meshContent.Positions.Add(new Vector3(meshData.vertices[i + positionOffset]
@@ -108,6 +108,7 @@ namespace G3DModelImporter.G3DImporter
                 foreach (MeshPartData meshPart in meshData.parts)
                 {
                     // We only support triangles. 4 is the value for GL_TRIANGLES in OpenGL.
+                    // TODO [danilo] maybe do some conversion in case primitive type isn't GL_TRIANGLES?
                     if (meshPart.primitiveType != 4)
                     {
                         continue;
@@ -124,6 +125,7 @@ namespace G3DModelImporter.G3DImporter
                     meshContent.Geometry.Add(geometryContent);
 
                     // Adds position indices to this geometry and form our triangles
+                    vertexIndices.Clear();
                     foreach (int vertexIndex in meshPart.indices)
                     {
                         // If it's the first time we're adding this index, add it
@@ -131,6 +133,7 @@ namespace G3DModelImporter.G3DImporter
                         if (!geometryContent.Indices.Contains(vertexIndex))
                         {
                             geometryContent.Vertices.Add(vertexIndex);
+                            vertexIndices.Add(vertexIndex);
                         }
 
                         // Here we are composing triangles, each three indicies form a triangle.
@@ -138,12 +141,27 @@ namespace G3DModelImporter.G3DImporter
                     }
 
                     // Adds vertex channels to this geometry content
-                    foreach (KeyValuePair<int, int> vertexEntry in vertexChannels)
+                    foreach (VertexAttribute attr in meshData.attributes)
                     {
-                        switch (vertexEntry.Key)
+                        switch (attr.usage)
                         {
                             case VertexAttribute.NORMAL:
-                                
+                            case VertexAttribute.BINORMAL:
+                            case VertexAttribute.TANGENT:
+                            case VertexAttribute.COLOR:
+                                {
+                                    Vector3[] vertexChannelData = AsVector3(vertexIndices, meshData.vertices, vertexSize, vertexChannels[attr.usage]);
+                                    geometryContent.Vertices.Channels.Add(VertexAttribute.GetXNAName(attr), vertexChannelData);
+                                }
+                                break;
+
+                            case VertexAttribute.BONE_WEIGHT:
+                            case VertexAttribute.TEX_COORD:
+                                {
+                                    Vector2[] vertexChannelData = AsVector2(vertexIndices, meshData.vertices, vertexSize, vertexChannels[attr.usage]);
+                                    geometryContent.Vertices.Channels.Add(VertexAttribute.GetXNAName(attr), vertexChannelData);
+                                }
+                                break;
                         }
                     }
                 }
@@ -180,7 +198,7 @@ namespace G3DModelImporter.G3DImporter
                     foreach (NodePartData nodePartData in nodeData.parts)
                     {
                         GeometryContent equivalentGeometry = meshPartContentCollection[nodePartData.meshPartId];
-                        SkinnedMaterialContent equivalentMaterial = materialContentCollection[nodePartData.materialId];
+                        MaterialContent equivalentMaterial = materialContentCollection[nodePartData.materialId];
 
                         equivalentGeometry.Material = equivalentMaterial;
                     }
@@ -190,15 +208,45 @@ namespace G3DModelImporter.G3DImporter
             return rootContent;
         }
 
-        private Vector2[] AsVector2 (float[] vertices, int vertexSize, int index, int offset, int[] indices)
+        private Vector3[] AsVector3 (List<int> indices, float[] vertices, int vertexSize, int offset)
         {
-            int offsetPosition = (index * vertexSize) + offset;
-            Vector2[] data = new Vector2[indices.Length];
+            Vector3[] data = new Vector3[indices.Count];
 
-            for (int i=0; i<indices.Length; i++)
+            //for (int i=0; i<indices.Count; i++)
+            int pos = 0;
+            foreach (int vertexIndex in indices)
             {
-                
+                int vertexPos = (vertexIndex * vertexSize);
+                Vector3 channelValues = new Vector3
+                {
+                        X = vertices[ vertexPos + offset],
+                        Y = vertices[ vertexPos + offset + 1],
+                        Z = vertices[ vertexPos + offset + 2],
+                };
+                data[pos++] = channelValues;
             }
+
+            return data;
+        }
+
+        private Vector2[] AsVector2 (List<int> indices, float[] vertices, int vertexSize, int offset)
+        {
+            Vector2[] data = new Vector2[indices.Count];
+
+            //for (int i=0; i<indices.Count; i++)
+            int pos = 0;
+            foreach (int vertexIndex in indices)
+            {
+                int vertexPos = (vertexIndex * vertexSize);
+                Vector2 channelValues = new Vector2
+                    {
+                        X = vertices[ vertexPos + offset],
+                        Y = vertices[ vertexPos + offset + 1]
+                    };
+                data[pos++] = channelValues;
+            }
+
+            return data;
         }
 
         private string FilenameToName(string filename)

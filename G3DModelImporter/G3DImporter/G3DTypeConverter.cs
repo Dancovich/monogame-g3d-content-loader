@@ -11,10 +11,10 @@ namespace G3DModelImporter.G3DImporter
         public override bool CanConvert(Type objectType)
         {
             return typeof(VertexAttribute).IsAssignableFrom(objectType)
-                || typeof(Color).IsAssignableFrom(objectType)
-                || typeof(Vector2).IsAssignableFrom(objectType)
-                || typeof(Vector3).IsAssignableFrom(objectType)
-                || typeof(Quaternion).IsAssignableFrom(objectType);
+                || typeof(Color?).IsAssignableFrom(objectType)
+                || typeof(Vector2?).IsAssignableFrom(objectType)
+                || typeof(Vector3?).IsAssignableFrom(objectType)
+                || typeof(Quaternion?).IsAssignableFrom(objectType);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -34,10 +34,10 @@ namespace G3DModelImporter.G3DImporter
                     throw new JsonSerializationException(String.Format("Expected the name of a VERTEX ATTRIBUTE, got token type {0} instead", reader.TokenType));
                 }
             }
-            else if (typeof(Color).IsAssignableFrom(objectType)
-                || typeof(Vector2).IsAssignableFrom(objectType)
-                || typeof(Vector3).IsAssignableFrom(objectType)
-                || typeof(Quaternion).IsAssignableFrom(objectType))
+            else if (typeof(Color?).IsAssignableFrom(objectType)
+                || typeof(Vector2?).IsAssignableFrom(objectType)
+                || typeof(Vector3?).IsAssignableFrom(objectType)
+                || typeof(Quaternion?).IsAssignableFrom(objectType))
             {
                 if (reader.TokenType == JsonToken.StartArray)
                 {
@@ -65,19 +65,19 @@ namespace G3DModelImporter.G3DImporter
 
                     float[] floatArray = listOfFloats.ToArray();
 
-                    if (typeof(Color).IsAssignableFrom(objectType))
+                    if (typeof(Color?).IsAssignableFrom(objectType))
                     {
                         return ReadColor(floatArray);
                     }
-                    else if (typeof(Vector2).IsAssignableFrom(objectType))
+                    else if (typeof(Vector2?).IsAssignableFrom(objectType))
                     {
                         return ReadVector2(floatArray);
                     }
-                    else if (typeof(Vector3).IsAssignableFrom(objectType))
+                    else if (typeof(Vector3?).IsAssignableFrom(objectType))
                     {
                         return ReadVector3(floatArray);
                     }
-                    else if (typeof(Quaternion).IsAssignableFrom(objectType))
+                    else if (typeof(Quaternion?).IsAssignableFrom(objectType))
                     {
                         return ReadQuaternion(floatArray);
                     }
@@ -186,11 +186,15 @@ namespace G3DModelImporter.G3DImporter
             }
             else if (((string)value).StartsWith("TEXCOORD"))
             {
-                return new VertexAttribute(VertexAttribute.TEX_COORD, 2);
+                int attrIndex = 0;
+                int.TryParse(((string)value).Substring(8), out attrIndex);
+                return new VertexAttribute(VertexAttribute.TEX_COORD, 2, attrIndex);
             }
             else if (((string)value).StartsWith("BLENDWEIGHT"))
             {
-                return new VertexAttribute(VertexAttribute.BONE_WEIGHT, 2);
+                int attrIndex = 0;
+                int.TryParse(((string)value).Substring(11), out attrIndex);
+                return new VertexAttribute(VertexAttribute.BONE_WEIGHT, 2, attrIndex);
             }
             else
             {
