@@ -11,6 +11,8 @@ namespace G3DModelImporter.JsonModelData
         public float[] vertices;
 
         public MeshPartData[] parts;
+
+        public int vertexSize;
     }
 }
 

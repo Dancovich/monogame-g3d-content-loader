@@ -9,7 +9,9 @@ namespace G3DModelImporter.JsonModelData
 
         public int[] indices;
 
-        public int primitiveType;
+        public string type;
+
+        public MeshData parent;
     }
 }
 

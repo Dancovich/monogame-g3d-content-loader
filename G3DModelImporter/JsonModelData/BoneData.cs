@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace G3DModelImporter.JsonModelData
 {
@@ -16,7 +11,5 @@ namespace G3DModelImporter.JsonModelData
         public Quaternion? rotation;
 
         public Vector3? scale;
-
-        public int[][] uvmapping;
     }
 }

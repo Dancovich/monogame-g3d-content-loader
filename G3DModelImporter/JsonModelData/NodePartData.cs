@@ -6,6 +6,8 @@
 
         public string meshPartId;
 
+        public int[][] uvmapping;
+
         public BoneData[] bones;
     }
 }
