@@ -40,7 +40,7 @@ namespace TestGame
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            gameModel = Content.Load<Model>("soldier");
+            gameModel = Content.Load<Model>("box3");
 
             // TODO: use this.Content to load your game content here
         }
@@ -76,6 +76,20 @@ namespace TestGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            foreach (ModelMesh mesh in gameModel.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    ((BasicEffect)effect).EnableDefaultLighting();
+                    ((BasicEffect)effect).PreferPerPixelLighting = true;
+                    ((BasicEffect)effect).World = Matrix.Identity;
+                    ((BasicEffect)effect).View = Matrix.CreateLookAt(new Vector3(0f, 0f, 6f), Vector3.Zero, Vector3.UnitY);
+                    ((BasicEffect)effect).Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(50f), 16f / 9f, 1f, 300f);
+                }
+
+                mesh.Draw();
+            }
 
             base.Draw(gameTime);
         }

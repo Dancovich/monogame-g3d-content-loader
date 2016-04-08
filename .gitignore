@@ -8,5 +8,6 @@ G3DModelImporter.userprefs
 /TestGame/obj/x86/Debug
 /TestGame/Content/obj/DesktopGL/soldier.mgcontent
 /TestGame/Content/obj/DesktopGL/.mgcontent
-/TestGame/Content/bin/DesktopGL/soldier.xnb
+/TestGame/Content/bin
+/TestGame/bin
 *.exe
