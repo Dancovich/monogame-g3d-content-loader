@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
+# Visual Studio 2012
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "G3DModelImporter", "G3DModelImporter\G3DModelImporter.csproj", "{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGame", "TestGame\TestGame.csproj", "{78BE7864-2596-46D7-852B-7D740F909D25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestGame", "TestGame\TestGame.csproj", "{2028C31C-09E4-4B1D-99F5-2BF71A15983D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +15,14 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Debug|x86.Build.0 = Debug|Any CPU
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Release|x86.ActiveCfg = Release|Any CPU
+		{2028C31C-09E4-4B1D-99F5-2BF71A15983D}.Release|x86.Build.0 = Release|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -23,19 +31,13 @@ Global
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|x86.ActiveCfg = Release|Any CPU
 		{C98CB25A-61EF-46E3-ACE4-E18BE32E3E67}.Release|x86.Build.0 = Release|Any CPU
-		{78BE7864-2596-46D7-852B-7D740F909D25}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{78BE7864-2596-46D7-852B-7D740F909D25}.Debug|x86.ActiveCfg = Debug|x86
-		{78BE7864-2596-46D7-852B-7D740F909D25}.Debug|x86.Build.0 = Debug|x86
-		{78BE7864-2596-46D7-852B-7D740F909D25}.Release|Any CPU.ActiveCfg = Release|x86
-		{78BE7864-2596-46D7-852B-7D740F909D25}.Release|x86.ActiveCfg = Release|x86
-		{78BE7864-2596-46D7-852B-7D740F909D25}.Release|x86.Build.0 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
 		$0.VersionControlPolicy = $1
 		$1.inheritsSet = Mono
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
